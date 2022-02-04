@@ -1,7 +1,7 @@
 <template>
   <el-container
                 class="layout-container-demo"
-                style="height: 500px; border: 1px solid #eee">
+                style=" border: 1px solid #eee">
     <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
       <el-scrollbar>
         <el-menu :default-openeds="['1', '3']">
