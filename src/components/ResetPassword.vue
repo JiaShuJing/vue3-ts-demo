@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, getCurrentInstance } from "vue"
+  import { ref } from "vue"
   import { useRouter, useRoute } from "vue-router"
   export default {
     props: {
@@ -31,17 +31,17 @@
     },
     setup(props: any) {
       // @ts-ignore
-      const { ctx } = getCurrentInstance()
+      const resetPasswordForm = <any>ref()
       const router = useRouter()
       const route = useRoute()
       const { token } = route.params
       const handleReset = () => {
-        ctx.$axios
+        resetPasswordForm.$axios
           .put(`/api/v1/auth/resetpassword/${token}`, {
             password: props.password
           })
           .then((res: any) => {
-            ctx.$message({
+            resetPasswordForm.$message({
               type: "success",
               message: "密码重置成功，请重新登录"
             })

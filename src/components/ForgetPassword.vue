@@ -1,5 +1,6 @@
 <template>
   <el-form
+           ref="root"
            label-width="100px"
            class="loginForm sign-in-form">
     <el-form-item label="邮箱" prop="email">
@@ -17,7 +18,6 @@
 </template>
 
 <script lang="ts">
-  import { getCurrentInstance } from "vue"
   import { useRouter } from "vue-router"
   export default {
     props: {
@@ -28,10 +28,10 @@
     },
     setup(props: any) {
       // @ts-ignore
-      const { ctx } = getCurrentInstance()
+      const root = ref()
       const router = useRouter()
       const sendEmail = async () => {
-        const res = await ctx.$axios
+        const res = await root.$axios
           .post("/api/v1/auth/forgotpassword", { email: props.email })
           .then((res: any) => {
             console.log("res", res)

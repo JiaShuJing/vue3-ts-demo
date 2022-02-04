@@ -21,6 +21,14 @@
                   v-if="form.itemType==='input' || form.itemType===undefined"
                   v-model="params[form.modelValue]"></el-input>
       </el-form-item>
+      <el-form-item label :style="btnStyle">
+        <el-button
+                   v-if="showSubmitBtn"
+                   type="primary"
+                   :size="size"
+                   @click="searchHandler"
+                   :loading="submitLoading">{{submitBtnText}}</el-button>
+      </el-form-item>
     </el-form>
   </div>
 
@@ -48,6 +56,14 @@
     formItemStyle: {
       type: Object,
       default: {}
+    },
+    showSubmitBtn: {
+      type: Boolean,
+      default: true
+    },
+    submitBtnText: {
+      type: String,
+      default: "查询"
     }
   })
 

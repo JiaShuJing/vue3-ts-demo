@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, getCurrentInstance } from "vue"
+  import { ref } from "vue"
   import { useRouter } from "vue-router"
   export default {
     props: {
@@ -47,13 +47,13 @@
     },
     setup(props: any) {
       // @ts-ignore
-      const { ctx } = getCurrentInstance()
+      const loginForm = <any>ref()
       // 触发登录方法
       const router = useRouter()
       const handleLogin = (formName: string) => {
-        ctx.$refs[formName].validate((valid: boolean) => {
+        loginForm.$refs[formName].validate((valid: boolean) => {
           if (valid) {
-            ctx.$axios
+            loginForm.$axios
               .post("/api/v1/auth/login", props.loginUser)
               .then((res: any) => {
                 const { token } = res.data

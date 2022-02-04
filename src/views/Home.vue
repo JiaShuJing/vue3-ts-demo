@@ -27,6 +27,7 @@
     setup() {
       const data = reactive({
         formOptions: {
+          showSubmitBtn: true,
           submitBtnText: "查询",
           formStyle: {
             display: "flex",
@@ -79,6 +80,11 @@
                 type: "text",
                 class: "a-blue jdt-blue",
                 label: "编辑"
+              },
+              {
+                type: "text",
+                class: "a-blue jdt-blue",
+                label: "删除"
               }
             ]
           }

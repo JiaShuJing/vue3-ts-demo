@@ -85,7 +85,7 @@
                          :filter-placement="column.filterPlacement"
                          :filter-multiple="column.filterMultiple"
                          :filtered-value="column.filteredValue">
-          <template slot-scope='scope'>
+          <template v-slot='scope'>
             <span v-if="column.filter">{{
             Vue.filter(column["filter"])(scope.row[column.prop])
             }}</span>
@@ -94,13 +94,13 @@
                     :row="scope.row"
                     :$index="scope.$index" />
             </span>
-            <!-- <span v-else-if="column.cmds" class="col-cmds">
+            <span v-else-if="column.cmds" class="col-cmds">
               <span
                     v-for="(cmd,cmdIndex) in column.cmds"
                     :key="cmdIndex"
                     class="cmd-item">
                 <span
-                      v-if="cmd.showCondition==undefined" || cmd.showCondition(scope.row)>
+                      v-if="cmd.showCondition==undefined || cmd.showCondition(scope.row)">
                   <el-dropdown
                                @command="cmd.cmd"
                                v-if="cmd.type == 'dropdown'"
@@ -127,7 +127,7 @@
                   <div class="border-lefyt-line" :class="cmd.class"></div>
                 </span>
               </span>
-            </span> -->
+            </span>
             <span v-else>{{
             column.render?column.render(scope.row):initColValue(scope.row,column.prop)}}</span>
           </template>
@@ -135,7 +135,6 @@
 
       </template>
     </el-table>
-
   </div>
 </template>
 
@@ -159,8 +158,6 @@
         }
       ])
       const initColValue = (row: any, prop: any) => {
-        console.log({ row, prop })
-
         let result = row
         if (prop && prop.indexOf(".") !== -1) {
           prop.split(".").forEach((vv: any) => {
@@ -171,11 +168,17 @@
         }
         return result
       }
+      const cmdChidlren = (row: any, cmd: any) => {
+        var tmpRow = Object.assign({}, row)
+        tmpRow.command = cmd
+        return tmpRow
+      }
       return {
         loading,
         newSlotScope,
         tableData,
-        initColValue
+        initColValue,
+        cmdChidlren
       }
     },
     props: {

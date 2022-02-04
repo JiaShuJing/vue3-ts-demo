@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, getCurrentInstance } from "vue"
+  import { ref } from "vue"
   import { useRouter } from "vue-router"
   // import axios from 'axios' // 仅限在当前组件使用
   export default {
@@ -62,12 +62,12 @@
     },
     setup(props: any) {
       // @ts-ignore
-      const { ctx } = getCurrentInstance()
+      const registerForm = <any>ref()
       const router = useRouter()
       const handleRegister = (formName: string) => {
-        ctx.$refs[formName].validate((valid: boolean) => {
+        registerForm.$refs[formName].validate((valid: boolean) => {
           if (valid) {
-            ctx.$axios
+            registerForm.$axios
               .post("/api/v1/auth/register", props.registerUser)
               .then((res: any) => {
                 const { token } = res.data
