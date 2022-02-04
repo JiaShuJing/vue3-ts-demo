@@ -43,78 +43,139 @@
               :show-summery="showSummery"
               :sum-text="sumText"
               :summery-method="summerMethod"
-              :size="size"></el-table>
-    <slot name="prepend" />
-    <el-table-column
-                     v-if="check"
-                     type='selection'
-                     width='50'
-                     :selectable='selectable'>
-    </el-table-column>
-    <el-table-column
-                     v-if="no"
-                     type='index'
-                     :index='indexMethod'
-                     width='60'
-                     label='序号'
-                     align='center'>
+              :size="size">
+      <slot name="prepend" />
+      <el-table-column
+                       v-if="check"
+                       type='selection'
+                       width='50'
+                       :selectable='selectable'>
+      </el-table-column>
+      <el-table-column
+                       v-if="no"
+                       type='index'
+                       :index='indexMethod'
+                       width='60'
+                       label='序号'
+                       align='center'>
 
-    </el-table-column>
-    <template v-for="(column,index) in columns">
-      <el-table-column :key="columnIndex"
-                       v-if="column.show===undefined|| column.show"
-                       :column-key="column.columnKey"
-                       :prop="column.prop"
-                       :label="column.label"
-                       :width="column.width"
-                       :min-width="column.minWidth"
-                       :fixed="column.fixed"
-                       :render-header="renderHeader"
-                       :sortable="column.sortable"
-                       :sort-method="sortMethod"
-                       :resizable="column.resizable"
-                       :formatter="column.formatter"
-                       :show-overflow-tooltip="column.showOverflowTooltip"
-                       :align="column.align"
-                       :header-align="headerAlign"
-                       :class-name="column.className"
-                       :label-class-name="labelClassName"
-                       :selectable="column.selectable"
-                       :reverse-selection="column.reverseSelection"
-                       :filters="column.filters"
-                       :filter-placement="column.filterPlacement"
-                       :filter-multiple="column.filterMultiple"
-                       :filter-method="colum.filterMethod"
-                       :filtered-value="column.filteredValue">
-        <template slot-scope="scope" :scope="newSlotScope?'scope':false">
-          <span v-if="column.filter">{{
+      </el-table-column>
+      <template v-for="(column,index) in columns">
+        <el-table-column :key="index"
+                         v-if="column.show===undefined|| column.show"
+                         :column-key="column.columnKey"
+                         :prop="column.prop"
+                         :label="column.label"
+                         :width="column.width"
+                         :min-width="column.minWidth"
+                         :fixed="column.fixed"
+                         :render-header="renderHeader"
+                         :sortable="column.sortable"
+                         :sort-method="sortMethod"
+                         :resizable="column.resizable"
+                         :formatter="column.formatter"
+                         :show-overflow-tooltip="column.showOverflowTooltip"
+                         :align="column.align"
+                         :header-align="headerAlign"
+                         :class-name="column.className"
+                         :label-class-name="labelClassName"
+                         :selectable="column.selectable"
+                         :reverse-selection="column.reverseSelection"
+                         :filters="column.filters"
+                         :filter-placement="column.filterPlacement"
+                         :filter-multiple="column.filterMultiple"
+                         :filtered-value="column.filteredValue">
+          <template slot-scope='scope'>
+            <span v-if="column.filter">{{
             Vue.filter(column["filter"])(scope.row[column.prop])
             }}</span>
-          <span v-else-if="column.slotName">
-            <slot :name="column.slotName"
-                  :row="scope.row"
-                  :$index="scope.$index" />
-          </span>
-          <span v-else-if="column.cmds" class="col-cmds">
-            <span
-                  v-for="(cmd,cmdIndex) in column.cmds"
-                  :key="cmdIndex"
-                  class="cmd-item"></span>
-          </span>
-        </template>
-      </el-table-column>
+            <span v-else-if="column.slotName">
+              <slot :name="column.slotName"
+                    :row="scope.row"
+                    :$index="scope.$index" />
+            </span>
+            <!-- <span v-else-if="column.cmds" class="col-cmds">
+              <span
+                    v-for="(cmd,cmdIndex) in column.cmds"
+                    :key="cmdIndex"
+                    class="cmd-item">
+                <span
+                      v-if="cmd.showCondition==undefined" || cmd.showCondition(scope.row)>
+                  <el-dropdown
+                               @command="cmd.cmd"
+                               v-if="cmd.type == 'dropdown'"
+                               size="small"
+                               style="padding-right:15px">
+                    <el-button type='text' size='small' :disabled="!(cmd.auth == undefined ?true:cmd.auth)">
+                      {{cmd.label}}
+                      <i class="el-icon-arrow-down el-icon-right" style="font-size:12px"></i>
+                    </el-button>
+                    <el-dropdown-item
+                                      v-for="(children,childrenIndex) in cmd.children"
+                                      :key="childrenIndex"
+                                      :disabled="chidlren.disableMethod && children.disableMethod(scope.row)"
+                                      :command=" cmdChildren(scope.row,children.command)">
+                      {{children.commandText}}
+                    </el-dropdown-item>
+                  </el-dropdown>
+                  <el-button
+                             v-else
+                             size="small"
+                             :type="cmd.type"
+                             :class="cmd.class"
+                             @click="cmd.cmd(scope.row)">{{cmd.label}}</el-button>
+                  <div class="border-lefyt-line" :class="cmd.class"></div>
+                </span>
+              </span>
+            </span> -->
+            <span v-else>{{
+            column.render?column.render(scope.row):initColValue(scope.row,column.prop)}}</span>
+          </template>
+        </el-table-column>
 
-    </template>
+      </template>
+    </el-table>
+
   </div>
 </template>
 
 <script lang='ts'>
+  import { reactive } from "@vue/reactivity"
   export default {
     name: "jtable",
     setup() {
       let loading = false
+      let newSlotScope = true
+      let tableData = reactive([
+        {
+          id: 1,
+          username: "憨憨",
+          password: "123456"
+        },
+        {
+          id: 2,
+          username: "小憨",
+          password: "123321"
+        }
+      ])
+      const initColValue = (row: any, prop: any) => {
+        console.log({ row, prop })
+
+        let result = row
+        if (prop && prop.indexOf(".") !== -1) {
+          prop.split(".").forEach((vv: any) => {
+            result = result[vv]
+          })
+        } else {
+          result = result[prop]
+        }
+        return result
+      }
       return {
-        loading
+        loading,
+        newSlotScope,
+        tableData,
+        initColValue
       }
     },
     props: {
@@ -123,7 +184,127 @@
       },
       searchHandler: Function,
       beforeSearch: Function,
-      beforeNew: Function
+      beforeNew: Function,
+      saveParams: {
+        type: Boolean,
+        default: false
+      },
+      check: {
+        type: Boolean,
+        default: false
+      },
+      selectable: {
+        type: Function,
+        default: function () {
+          return true
+        }
+      },
+      no: {
+        type: Boolean,
+        default: true
+      },
+      height: [String, Number],
+      maxHeight: [String, Number],
+      stripe: { type: Boolean, default: false },
+      border: { type: Boolean, default: false },
+      fit: { type: Boolean, default: true },
+      showHeader: {
+        type: Boolean,
+        default: true
+      },
+      size: {
+        type: String,
+        default: "small"
+      },
+      headerAlign: {
+        type: String,
+        default: "center"
+      },
+      emptyText: {
+        type: String,
+        default: "暂无数据"
+      },
+      highlightCurrentRow: Boolean,
+      currentRowKey: [String, Number],
+      rowClassName: [String, Function],
+      rowStyle: [String, Function],
+      rowKey: [String, Function],
+      defaultExpandAll: Boolean,
+      expandRowKeys: Array,
+      defaultSort: String,
+      defaultSortFiled: String,
+      tooltipEffect: String,
+      showSummery: Boolean,
+      sumText: String,
+      sumMethod: Function,
+      url: String,
+      server: String,
+      headers: {
+        type: Object,
+        default: () => {
+          return {}
+        }
+      },
+      totalFiled: {
+        type: String,
+        default: "data.totalCount"
+      },
+      params: {
+        type: Object,
+        default: () => {
+          return {}
+        }
+      },
+      autoLoad: {
+        type: Boolean,
+        default: true
+      },
+      type: {
+        type: String,
+        default: "remote",
+        validator(value: any) {
+          const types = ["remote", "local"]
+          const validType = types.indexOf(value) !== -1
+          if (!validType) {
+            throw new Error(
+              `Invalid type of ${value},please set one type of 'remote' or 'local'`
+            )
+          }
+          return validType
+        }
+      },
+      data: {
+        type: Array
+      },
+      dataHandler: {
+        type: Function
+      },
+      columns: {
+        type: Array,
+        required: true
+      },
+      showPagination: {
+        type: Boolean,
+        default: true
+      },
+      pageSizes: {
+        type: Array,
+        default: () => {
+          return [10, 15, 20, 50, 100]
+        }
+      },
+      paginationLayout: {
+        type: String,
+        default: "total,sizes,prev,pager,next,jumper"
+      },
+      pageIndexKey: {
+        type: String,
+        default: "pageIndex"
+      },
+      pageSizeKey: {
+        type: String,
+        default: "pageSize"
+      }
     }
   }
 </script>

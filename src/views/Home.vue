@@ -6,7 +6,7 @@
             type="remote"
             :url="url"
             :columns="columns"
-            :form-options="formOptions"
+            :formOptions="formOptions"
             :new="handleAdd">
       <el-button
                  slot="middle"
@@ -30,7 +30,7 @@
           submitBtnText: "查询",
           formStyle: {
             display: "flex",
-            "flex-wrap": "nowrap",
+            "flex-wrap": "nowrap"
             // "justify-content": "space-between"
           },
           btnStyle: {
