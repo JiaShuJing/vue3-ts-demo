@@ -84,7 +84,7 @@
       default: () => []
     }
   })
-  const emit = defineEmits(["searchHandler"])
+  const emits = defineEmits(["searchHandler"])
   const params = reactive({})
   props.forms.forEach((v: any, i: number) => {
     const propType = typeof v.prop
@@ -94,8 +94,6 @@
     }
   })
   const searchHandler = () => {
-    console.log("hhhhhh")
-    emit("searchHandler", props)
-    console.log("llllll")
+    emits("searchHandler", params)
   }
 </script>

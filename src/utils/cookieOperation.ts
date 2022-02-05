@@ -16,15 +16,15 @@ function getUserList(username?: string, password?: string): User[] {
   if (usersStr) {
     let users = JSON.parse(usersStr)
     if (username && password) {
-      users.map((user: User) => {
+      return users.filter((user: User) => {
         return user.username === username && user.password === password
       })
     } else if (username) {
-      users.map((user: User) => {
+      return users.filter((user: User) => {
         return user.username === username
       })
     } else if (password) {
-      users.map((user: User) => {
+      return users.filter((user: User) => {
         return user.password === password
       })
     } else {

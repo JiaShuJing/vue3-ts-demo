@@ -138,175 +138,162 @@
   </div>
 </template>
 
-<script lang='ts'>
-  export default {
-    name: "jtable",
-    setup(prop: any, context: any) {
-      let loading = false
-      let newSlotScope = true
-      const initColValue = (row: any, prop: any) => {
-        let result = row
-        if (prop && prop.indexOf(".") !== -1) {
-          prop.split(".").forEach((vv: any) => {
-            result = result[vv]
-          })
-        } else {
-          result = result[prop]
-        }
-        return result
-      }
-      const cmdChidlren = (row: any, cmd: any) => {
-        var tmpRow = Object.assign({}, row)
-        tmpRow.command = cmd
-        return tmpRow
-      }
-      const searchHandler = (params: any) => {
-        console.log(2222)
-        console.log("中间的组件接受的值", params)
-      }
-      return {
-        loading,
-        newSlotScope,
-        initColValue,
-        cmdChidlren,
-        searchHandler
+<script lang='ts' setup>
+  import { defineEmits, defineProps } from "vue"
+  const props = defineProps({
+    tableData: {
+      type: Array,
+      default: () => []
+    },
+    formOptions: {
+      type: Object
+    },
+    beforeSearch: Function,
+    beforeNew: Function,
+    saveParams: {
+      type: Boolean,
+      default: false
+    },
+    check: {
+      type: Boolean,
+      default: false
+    },
+    selectable: {
+      type: Function,
+      default: function () {
+        return true
       }
     },
-    props: {
-      tableData: {
-        type: Array,
-        default: () => []
-      },
-      formOptions: {
-        type: Object
-      },
-      searchHandler: {
-        type: Function,
-        default: () => {}
-      },
-      beforeSearch: Function,
-      beforeNew: Function,
-      saveParams: {
-        type: Boolean,
-        default: false
-      },
-      check: {
-        type: Boolean,
-        default: false
-      },
-      selectable: {
-        type: Function,
-        default: function () {
-          return true
-        }
-      },
-      no: {
-        type: Boolean,
-        default: true
-      },
-      height: [String, Number],
-      maxHeight: [String, Number],
-      stripe: { type: Boolean, default: false },
-      border: { type: Boolean, default: false },
-      fit: { type: Boolean, default: true },
-      showHeader: {
-        type: Boolean,
-        default: true
-      },
-      size: {
-        type: String,
-        default: "small"
-      },
-      headerAlign: {
-        type: String,
-        default: "center"
-      },
-      emptyText: {
-        type: String,
-        default: "暂无数据"
-      },
-      highlightCurrentRow: Boolean,
-      currentRowKey: [String, Number],
-      rowClassName: [String, Function],
-      rowStyle: [String, Function],
-      rowKey: [String, Function],
-      defaultExpandAll: Boolean,
-      expandRowKeys: Array,
-      defaultSort: String,
-      defaultSortFiled: String,
-      tooltipEffect: String,
-      showSummery: Boolean,
-      sumText: String,
-      sumMethod: Function,
-      url: String,
-      server: String,
-      headers: {
-        type: Object,
-        default: () => {
-          return {}
-        }
-      },
-      totalFiled: {
-        type: String,
-        default: "data.totalCount"
-      },
-      params: {
-        type: Object,
-        default: () => {
-          return {}
-        }
-      },
-      autoLoad: {
-        type: Boolean,
-        default: true
-      },
-      type: {
-        type: String,
-        default: "remote",
-        validator(value: any) {
-          const types = ["remote", "local"]
-          const validType = types.indexOf(value) !== -1
-          if (!validType) {
-            throw new Error(
-              `Invalid type of ${value},please set one type of 'remote' or 'local'`
-            )
-          }
-          return validType
-        }
-      },
-      data: {
-        type: Array
-      },
-      dataHandler: {
-        type: Function
-      },
-      columns: {
-        type: Array,
-        required: true
-      },
-      showPagination: {
-        type: Boolean,
-        default: true
-      },
-      pageSizes: {
-        type: Array,
-        default: () => {
-          return [10, 15, 20, 50, 100]
-        }
-      },
-      paginationLayout: {
-        type: String,
-        default: "total,sizes,prev,pager,next,jumper"
-      },
-      pageIndexKey: {
-        type: String,
-        default: "pageIndex"
-      },
-      pageSizeKey: {
-        type: String,
-        default: "pageSize"
+    no: {
+      type: Boolean,
+      default: true
+    },
+    height: [String, Number],
+    maxHeight: [String, Number],
+    stripe: { type: Boolean, default: false },
+    border: { type: Boolean, default: false },
+    fit: { type: Boolean, default: true },
+    showHeader: {
+      type: Boolean,
+      default: true
+    },
+    size: {
+      type: String,
+      default: "small"
+    },
+    headerAlign: {
+      type: String,
+      default: "center"
+    },
+    emptyText: {
+      type: String,
+      default: "暂无数据"
+    },
+    highlightCurrentRow: Boolean,
+    currentRowKey: [String, Number],
+    rowClassName: [String, Function],
+    rowStyle: [String, Function],
+    rowKey: [String, Function],
+    defaultExpandAll: Boolean,
+    expandRowKeys: Array,
+    defaultSort: String,
+    defaultSortFiled: String,
+    tooltipEffect: String,
+    showSummery: Boolean,
+    sumText: String,
+    sumMethod: Function,
+    url: String,
+    server: String,
+    headers: {
+      type: Object,
+      default: () => {
+        return {}
       }
+    },
+    totalFiled: {
+      type: String,
+      default: "data.totalCount"
+    },
+    params: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    autoLoad: {
+      type: Boolean,
+      default: true
+    },
+    type: {
+      type: String,
+      default: "remote",
+      validator(value: any) {
+        const types = ["remote", "local"]
+        const validType = types.indexOf(value) !== -1
+        if (!validType) {
+          throw new Error(
+            `Invalid type of ${value},please set one type of 'remote' or 'local'`
+          )
+        }
+        return validType
+      }
+    },
+    data: {
+      type: Array
+    },
+    dataHandler: {
+      type: Function
+    },
+    columns: {
+      type: Array,
+      required: true
+    },
+    showPagination: {
+      type: Boolean,
+      default: true
+    },
+    pageSizes: {
+      type: Array,
+      default: () => {
+        return [10, 15, 20, 50, 100]
+      }
+    },
+    paginationLayout: {
+      type: String,
+      default: "total,sizes,prev,pager,next,jumper"
+    },
+    pageIndexKey: {
+      type: String,
+      default: "pageIndex"
+    },
+    pageSizeKey: {
+      type: String,
+      default: "pageSize"
     }
+  })
+
+  let loading = false
+  let newSlotScope = true
+  const emits = defineEmits(["searchHandler"])
+  const initColValue = (row: any, prop: any) => {
+    let result = row
+    if (prop && prop.indexOf(".") !== -1) {
+      prop.split(".").forEach((vv: any) => {
+        result = result[vv]
+      })
+    } else {
+      result = result[prop]
+    }
+    return result
+  }
+  const cmdChidlren = (row: any, cmd: any) => {
+    var tmpRow = Object.assign({}, row)
+    tmpRow.command = cmd
+    return tmpRow
+  }
+  const searchHandler = (params: any) => {
+    // console.log("中间的组件接受的值", params)
+    emits("searchHandler", params)
   }
 </script>
 

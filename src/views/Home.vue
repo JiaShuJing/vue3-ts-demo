@@ -162,10 +162,12 @@
         }
       })
       const initUserList = (username?: string, password?: string): User[] => {
-        console.log({ username, password })
-        return getUserList(username, password)
+        const userList = getUserList(username, password)
+        console.log("get user list", userList)
+        return userList
       }
-      let tableData = reactive(initUserList())
+      const userList = initUserList()
+      let tableData: User[] = reactive(userList)
       const dialogTitle = ref("新增用户")
       const form = reactive({
         id: 0,
@@ -191,9 +193,14 @@
           })
         })
       }
-      const searchHandler = (prop: any) => {
-        console.log("子组件传的值", prop)
-        initUserList(prop.username, prop.password)
+      const searchHandler = ({
+        username,
+        password
+      }: {
+        username: string
+        password: string
+      }) => {
+        tableData = initUserList(username, password)
       }
 
       return {
