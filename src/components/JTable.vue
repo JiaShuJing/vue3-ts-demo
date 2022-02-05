@@ -7,7 +7,6 @@
              :size="formOptions.size"
              :label-width="formOptions.labelWidth"
              :item-width="formOptions.itemWidth"
-             :submit-handler="searchHandler"
              :before-search="beforeSearch"
              :before-new="beforeNew"
              :submit-loading="loading"
@@ -17,7 +16,9 @@
              :newBtnText="formOptions.newBtnText"
              :form-style="formOptions.formStyle"
              :form-item-style="formOptions.formItemStyle"
-             :btn-style="formOptions.btnStyle" />
+             :btn-style="formOptions.btnStyle"
+             :addHandler="formOptions.addHandler"
+             @searchHandler="searchHandler" />
     <slot name="middle"></slot>
     <slot name="form" :loading="loading" :search="searchHandler"></slot>
     <el-table
@@ -76,7 +77,7 @@
                          :formatter="column.formatter"
                          :show-overflow-tooltip="column.showOverflowTooltip"
                          :align="column.align"
-                         :header-align="headerAlign"
+                         :header-align="column.align"
                          :class-name="column.className"
                          :label-class-name="labelClassName"
                          :selectable="column.selectable"
@@ -100,15 +101,14 @@
                     :key="cmdIndex"
                     class="cmd-item">
                 <span
-                      v-if="cmd.showCondition==undefined || cmd.showCondition(scope.row)">
+                      class="operation-span" v-if="cmd.showCondition==undefined || cmd.showCondition(scope.row)">
                   <el-dropdown
                                @command="cmd.cmd"
                                v-if="cmd.type == 'dropdown'"
-                               size="small"
-                               style="padding-right:15px">
+                               size="small">
                     <el-button type='text' size='small' :disabled="!(cmd.auth == undefined ?true:cmd.auth)">
                       {{cmd.label}}
-                      <i class="el-icon-arrow-down el-icon-right" style="font-size:12px"></i>
+                      <i class="el-icon-arrow-down el-icon-right"></i>
                     </el-button>
                     <el-dropdown-item
                                       v-for="(children,childrenIndex) in cmd.children"
@@ -124,7 +124,7 @@
                              :type="cmd.type"
                              :class="cmd.class"
                              @click="cmd.cmd(scope.row)">{{cmd.label}}</el-button>
-                  <div class="border-lefyt-line" :class="cmd.class"></div>
+                  <div class="border-left-line" :class="cmd.class"></div>
                 </span>
               </span>
             </span>
@@ -139,24 +139,11 @@
 </template>
 
 <script lang='ts'>
-  import { reactive } from "@vue/reactivity"
   export default {
     name: "jtable",
-    setup() {
+    setup(prop: any, context: any) {
       let loading = false
       let newSlotScope = true
-      let tableData = reactive([
-        {
-          id: 1,
-          username: "憨憨",
-          password: "123456"
-        },
-        {
-          id: 2,
-          username: "小憨",
-          password: "123321"
-        }
-      ])
       const initColValue = (row: any, prop: any) => {
         let result = row
         if (prop && prop.indexOf(".") !== -1) {
@@ -173,19 +160,30 @@
         tmpRow.command = cmd
         return tmpRow
       }
+      const searchHandler = (params: any) => {
+        console.log(2222)
+        console.log("中间的组件接受的值", params)
+      }
       return {
         loading,
         newSlotScope,
-        tableData,
         initColValue,
-        cmdChidlren
+        cmdChidlren,
+        searchHandler
       }
     },
     props: {
+      tableData: {
+        type: Array,
+        default: () => []
+      },
       formOptions: {
         type: Object
       },
-      searchHandler: Function,
+      searchHandler: {
+        type: Function,
+        default: () => {}
+      },
       beforeSearch: Function,
       beforeNew: Function,
       saveParams: {
@@ -311,3 +309,17 @@
     }
   }
 </script>
+
+<style scoped>
+  .operation-span {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  .border-left-line {
+    height: 12px;
+    display: inline-block;
+    border-left: 1px solid gray;
+    margin: 0 10px;
+    transform: translateY(2px);
+  }
+</style>

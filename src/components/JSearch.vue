@@ -28,14 +28,20 @@
                    :size="size"
                    @click="searchHandler"
                    :loading="submitLoading">{{submitBtnText}}</el-button>
+        <el-button
+                   v-if="showAddBtn"
+                   type="primary"
+                   :size="size"
+                   @click="addHandler"
+                   :loading="submitLoading">{{addBtnText}}</el-button>
       </el-form-item>
     </el-form>
   </div>
 
 </template>
 
-<script lang="ts" setup>
-  import { defineProps, reactive } from "vue"
+<script setup lang="ts">
+  import { defineProps, defineEmits, reactive } from "vue"
 
   const props = defineProps({
     tableData: {
@@ -64,16 +70,21 @@
     submitBtnText: {
       type: String,
       default: "查询"
+    },
+    showAddBtn: {
+      type: Boolean,
+      default: true
+    },
+    addBtnText: {
+      type: String,
+      default: "新增"
+    },
+    addHandler: {
+      type: Function,
+      default: () => []
     }
   })
-
-  const onSubmit = () => {
-    console.log("submit!")
-  }
-  const searchHandler = () => {
-    console.log("searchHandler")
-  }
-
+  const emit = defineEmits(["searchHandler"])
   const params = reactive({})
   props.forms.forEach((v: any, i: number) => {
     const propType = typeof v.prop
@@ -82,4 +93,9 @@
       params[v.prop] = ""
     }
   })
+  const searchHandler = () => {
+    console.log("hhhhhh")
+    emit("searchHandler", props)
+    console.log("llllll")
+  }
 </script>

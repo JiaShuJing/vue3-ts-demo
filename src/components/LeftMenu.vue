@@ -84,7 +84,7 @@
           <span>Tom</span>
         </div>
       </el-header>
-      <el-main>
+      <el-main style="padding:15px">
         <el-scrollbar>
           <router-view />
         </el-scrollbar>
