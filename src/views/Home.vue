@@ -47,8 +47,7 @@
     addUser,
     updateUser
   } from "@/utils/cookieOperation"
-  import { nextTick } from "@vue/runtime-core"
-  import router from "../router/index"
+  import { onMounted, watchEffect, watch } from "@vue/runtime-core"
 
   export default {
     name: "Home",
@@ -67,6 +66,7 @@
         userid = row.id
         //确定要删除吗？
         delUser(userid)
+        initUserList()
       }
       const data = reactive({
         formOptions: {
@@ -161,13 +161,11 @@
           formLabelWidth: "80"
         }
       })
-      const initUserList = (username?: string, password?: string): User[] => {
-        const userList = getUserList(username, password)
-        console.log("get user list", userList)
-        return userList
+      let tableData: any = ref([])
+      const initUserList = (username?: string, password?: string) => {
+        tableData.value = getUserList(username, password)
       }
-      const userList = initUserList()
-      let tableData: User[] = reactive(userList)
+      initUserList()
       const dialogTitle = ref("新增用户")
       const form = reactive({
         id: 0,
@@ -186,12 +184,7 @@
           updateUser(form)
         }
         dialogFormVisible.value = false
-        //刷新列表数据 不好使
-        nextTick(() => {
-          router.push({
-            path: "/"
-          })
-        })
+        initUserList()
       }
       const searchHandler = ({
         username,
@@ -200,7 +193,8 @@
         username: string
         password: string
       }) => {
-        tableData = initUserList(username, password)
+        initUserList(username, password)
+        console.log(2222, tableData)
       }
 
       return {
