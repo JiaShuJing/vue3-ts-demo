@@ -19,6 +19,8 @@
                     :style="form.style?form.style:formItemStyle">
         <el-input
                   v-if="form.itemType==='input' || form.itemType===undefined"
+                  clearable
+                  :placeholder="form.placeholder?form.placeholder:''"
                   v-model="params[form.modelValue]"></el-input>
       </el-form-item>
       <el-form-item label :style="btnStyle">

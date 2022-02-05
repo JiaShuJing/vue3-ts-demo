@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-  import { ref } from "vue"
+  import { ref, getCurrentInstance } from "vue"
   import { useRouter } from "vue-router"
   export default {
     props: {
@@ -45,9 +45,9 @@
         required: true
       }
     },
-    setup(props: any) {
+    setup(props: any, context: any) {
       // @ts-ignore
-      const loginForm = <any>ref()
+      const { ctx: loginForm }: any = getCurrentInstance()
       // 触发登录方法
       const router = useRouter()
       const handleLogin = (formName: string) => {

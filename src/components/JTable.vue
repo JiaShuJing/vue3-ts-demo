@@ -124,7 +124,7 @@
                              :type="cmd.type"
                              :class="cmd.class"
                              @click="cmd.cmd(scope.row)">{{cmd.label}}</el-button>
-                  <div class="border-left-line" :class="cmd.class"></div>
+                  <div class="border-left-line" :class="cmd.class" v-if="cmdIndex!==column.cmds.length-1"></div>
                 </span>
               </span>
             </span>

@@ -1,5 +1,5 @@
 <template>
-  <div class="home" ref="root">
+  <div class="home" ref="homeRef">
     <jtable
             ref="jtableList"
             class="jtable-list"
@@ -38,8 +38,7 @@
   </div>
 </template>
 <script lang="ts">
-  import { reactive, toRefs, ref } from "@vue/reactivity"
-  import { useRouter } from "vue-router"
+  import { reactive, toRefs, ref, getCurrentInstance } from "vue"
   import {
     User,
     getUserList,
@@ -47,12 +46,12 @@
     addUser,
     updateUser
   } from "@/utils/cookieOperation"
-  import { onMounted, watchEffect, watch } from "@vue/runtime-core"
+  import { onMounted, watchEffect, watch } from "vue"
 
   export default {
     name: "Home",
     setup(prop: any, context: any) {
-      const router = useRouter()
+      const { proxy }: any = getCurrentInstance()
       let dialogFormVisible = ref(false)
       let userid = 0
       const editUser = (row: any): void => {
@@ -163,7 +162,13 @@
       })
       let tableData: any = ref([])
       const initUserList = (username?: string, password?: string) => {
-        tableData.value = getUserList(username, password)
+        const userList = getUserList(username, password)
+        userList.map((user: User) => {
+          console.log(11111, proxy)
+          user.createtime = proxy.$moment(user.createtime).format("YYYY-MM-DD HH:mm:ss")
+          user.updatetime = proxy.$moment(user.updatetime).format("YYYY-MM-DD HH:mm:ss")
+        })
+        tableData.value = userList
       }
       initUserList()
       const dialogTitle = ref("新增用户")
@@ -196,7 +201,6 @@
         initUserList(username, password)
         console.log(2222, tableData)
       }
-
       return {
         ...toRefs(data),
         tableData,

@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-  import { ref } from "vue"
+  import { ref, getCurrentInstance } from "vue"
   import { useRouter } from "vue-router"
   // import axios from 'axios' // 仅限在当前组件使用
   export default {
@@ -62,7 +62,7 @@
     },
     setup(props: any) {
       // @ts-ignore
-      const registerForm = <any>ref()
+      const { ctx: registerForm } = getCurrentInstance()
       const router = useRouter()
       const handleRegister = (formName: string) => {
         registerForm.$refs[formName].validate((valid: boolean) => {
